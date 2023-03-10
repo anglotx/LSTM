@@ -81,17 +81,20 @@ def fit_lstm(train, batch_size, nb_epoch, neurons):
     model = Sequential()
     # neurons是神经元个数，batch_size是样本个数，batch_input_shape是输入形状，
     # stateful是状态保留
+
     # 1.同一批数据反复训练很多次，可保留每次训练状态供下次使用
     # 2.不同批数据之间有顺序关联，可保留每次训练状态
     # 3.不同批次数据，数据之间没有关联
+	
     model.add(LSTM(neurons, batch_input_shape=(batch_size, X.shape[1], X.shape[2]), stateful=True))
     model.add(Dense(1))
+	
     # 定义损失函数和优化器
     model.compile(loss='mean_squared_error', optimizer='adam')
     for i in range(nb_epoch):
         # shuffle=False是不混淆数据顺序
         model.fit(X, y, epochs=1, batch_size=batch_size, verbose=1, shuffle=False)
-        # 每训练完一个轮回，重置一次网络
+        # 每训练完一个轮回，重置一次网络---->网络状态和网络权重是两个东西
         model.reset_states()
     return model
 
@@ -122,15 +125,17 @@ train, test = supervised_values[0:-15], supervised_values[-15:]
 scaler, train_scaled, test_scaled = scale(train, test)
 
 
-# 构建一个LSTM网络模型，并训练，样本数：1，循环训练次数：3000，LSTM层神经元个数为4
+# 构建一个LSTM网络模型，并训练，样本数：1，循环训练次数：1000，LSTM层神经元个数为8
 lstm_model = fit_lstm(train_scaled, 1, 1000, 8)
 # 重构输入数据的形状，
 print(train_scaled)
 train_reshaped = train_scaled[:, 0].reshape(len(train_scaled), 1, 1)
 print(train_reshaped)
+
 # 使用构造的网络模型进行预测训练
 lstm_model.predict(train_reshaped, batch_size=1)
 #print(lstm_model.predict(train_reshaped, batch_size=1))
+
 # 遍历测试数据，对数据进行单步预测
 predictions = list()
 for i in range(len(test_scaled)):
