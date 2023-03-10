@@ -90,6 +90,9 @@ def fit_lstm(train, n_lag, n_seq, n_batch, nb_epoch, n_neurons):
     # 网络结构
     model = Sequential()
     # 一个神经元， batch_input_shape(1,1,1)，传递序列状态
+    # batch_input_shape=(batch_size, timesteps, data_dim))，期望输入数据尺寸: (batch_size, timesteps, data_dim)
+    #有状态 (stateful) 的循环神经网络模型中，在一个 batch 的样本处理完成后，其内部状态（记忆）会被记录并作为下一个 batch 的样本的初始状态。
+    #这允许处理更长的序列，同时保持计算复杂度的可控性
     model.add(LSTM(n_neurons, batch_input_shape=(n_batch, X.shape[1], X.shape[2]), stateful=True))
     model.add(Dense(y.shape[1]))
     model.compile(loss='mean_squared_error', optimizer='adam')
