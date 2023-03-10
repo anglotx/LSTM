@@ -1,4 +1,4 @@
-from pandas import DataFrame just test
+from pandas import DataFrame
 from pandas import Series
 from pandas import concat
 from pandas import read_csv
@@ -25,7 +25,9 @@ def parser(x):
 def timeseries_to_supervised(data, lag=1):
 	df = DataFrame(data)
 	columns = [df.shift(i) for i in range(1, lag+1)]
+	#运行完后columns为两列，每列都为一个DataFrame对象，columns本身为一个list类型
 	columns.append(df)
+	#pandas.concat()通常用来连接DataFrame对象，默认纵向连接。axis=1，表示列连接。
 	df = concat(columns, axis=1)
 	df.fillna(0, inplace=True)
 	return df
