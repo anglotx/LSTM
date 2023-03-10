@@ -1,8 +1,10 @@
 from pandas import read_csv
 from datetime import datetime
 # load data
+# date.strptime():将字符串转变成日期格式
 def parse(x):
 	return datetime.strptime(x, '%Y %m %d %H')
+
 dataset = read_csv('raw.csv',  parse_dates = [['year', 'month', 'day', 'hour']], index_col=0, date_parser=parse)
 dataset.drop('No', axis=1, inplace=True)
 # manually specify column names
