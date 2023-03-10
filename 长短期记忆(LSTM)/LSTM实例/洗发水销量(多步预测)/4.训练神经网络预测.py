@@ -77,26 +77,30 @@ def prepare_data(series, n_test, n_lag, n_seq):
     train, test = supervised_values[0:-n_test], supervised_values[-n_test:]
     return scaler, train, test
 
-# 你和一个LSTM网络，训练数据
+# 拟合一个LSTM网络，训练数据
 def fit_lstm(train, n_lag, n_seq, n_batch, nb_epoch, n_neurons):
+	
     # 每个4位序列中，第1位作为x，后3位作为预测值y
     X, y = train[:, 0:n_lag], train[:, n_lag:]
     # 重构训练数据结构->[samples, timesteps, features]->[22,1,1]
     X = X.reshape(X.shape[0], 1, X.shape[1])
     print(X)
     print(y)
+	
     # 网络结构
     model = Sequential()
     # 一个神经元， batch_input_shape(1,1,1)，传递序列状态
     model.add(LSTM(n_neurons, batch_input_shape=(n_batch, X.shape[1], X.shape[2]), stateful=True))
     model.add(Dense(y.shape[1]))
     model.compile(loss='mean_squared_error', optimizer='adam')
+	
     # 开始训练
     for i in range(nb_epoch):
         # 数据训练1次，每次训练1组数据，不混淆序列顺序
         model.fit(X, y, epochs=1, batch_size=n_batch, verbose=0, shuffle=False)
         # 每次训练完初始化网络状态（不是权重）
         model.reset_states()
+	
     return model
 
 # LSTM 单步预测
