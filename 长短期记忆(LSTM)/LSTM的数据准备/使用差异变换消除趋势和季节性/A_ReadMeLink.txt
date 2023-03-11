@@ -1,1 +1,0 @@
-https://machinelearningmastery.com/remove-trends-seasonality-difference-transform-python/
